@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# need to NOPASSWD setting
+# need to nonpassword
+#
+
 ZABBIX_PORT=10050
 HTTPD_PORT=80
 SERVER_IP="10.34.48.194"
