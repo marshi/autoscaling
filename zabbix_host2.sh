@@ -6,7 +6,7 @@ IP=`ifconfig eth0|grep inet|awk '{print $2}'|cut -d: -f2`
 TEMPLATE_ID=10113
 GROUP_ID=8
 HAPROXY_CONF=/etc/haproxy/haproxy.cfg
-
+SSH="ssh 10.34.48.194 "
 
 zabbix_docker() {
   while read EVENT; do
@@ -39,14 +39,14 @@ start_event() {
     echo $JSON
 
     #haproxyに追加
-    echo "    server ${CONTAINER} ${IP}:${L_HTTPD_PORT} check" >> $HAPROXY_CONF
-    sudo /etc/init.d/haproxy reload
+    $SSH echo "    server ${CONTAINER} ${IP}:${L_HTTPD_PORT} check" >> $HAPROXY_CONF
+    $SSH /etc/init.d/haproxy reload
 }
 
 stop_event() {
-    echo $CONTAINER
-    grep $CONTAINER $HAPROXY_CONF
-    sudo sed -i -e "/${CONTAINER}/d" $HAPROXY_CONF  
+    $SSH echo $CONTAINER
+    $SSH grep $CONTAINER $HAPROXY_CONF
+    $SSH sed -i -e "/${CONTAINER}/d" $HAPROXY_CONF  
 }
 
 echo start
