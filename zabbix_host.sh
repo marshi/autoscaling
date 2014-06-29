@@ -71,7 +71,7 @@ start_event() {
     #haproxyに追加
     echo ssh
     $SSH echo "    server ${CONTAINER} ${IP}:${L_HTTPD_PORT} check >> $HAPROXY_CONF"
-    $SSH /etc/init.d/haproxy reload
+    $SSH "sudo /etc/init.d/haproxy reload"
 }
 
 stop_event() {
@@ -79,7 +79,8 @@ stop_event() {
     $SSH grep $CONTAINER $HAPROXY_CONF
     #haproxyから削除
     $SSH sed -i -e "/${CONTAINER}/d" $HAPROXY_CONF  
-    
+    $SSH "sudo /etc/init.d/haproxy reload"
+
     #zabbix監視対象から削除
     TOKEN=`curl -X GET -H "Content-Type:application/json-rpc" -d '{"auth":null,"method":"user.login","id":1,"params":{"user":"admin","password":"zabbix"},"jsonrpc":"2.0"}' http://${SERVER_IP}/zabbix/api_jsonrpc.php | jq ".result"`
     GET_JSON="{\"jsonrpc\": \"2.0\", 
