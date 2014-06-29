@@ -29,5 +29,6 @@ HOSTS=`curl -X GET -H "Content-Type:application/json-rpc" -d "${JSON}" http://${
 for host in $HOSTS; do
   host=`echo $host | sed 's/\"//g'`
   cpu=`sh cpu.sh $host`
-  echo $cpu
+  echo zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k "docker_cpu" -o "${cpu}"
+  zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k "docker_cpu" -o "${cpu}"
 done

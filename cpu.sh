@@ -14,7 +14,7 @@ cpu(){
   cpu_file=$dir/cpuacct.stat
   time_file=$dir/cpuacct.usage
   if [ ! -e $cpu_file -o ! -e $time_file ]; then
-    return 
+    return 1
   fi
 
   #経過時間の差分を計算
@@ -77,6 +77,9 @@ fi
 if [ $# -eq 1 ];then
   container=$1
   cpu $container
+  if [ $? -eq 1 ]; then
+    exit 1;
+  fi
   exit 0
 else
   echo $USAGE 
