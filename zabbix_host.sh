@@ -69,7 +69,8 @@ start_event() {
     echo $JSON
 
     #haproxyに追加
-    $SSH echo "    server ${CONTAINER} ${IP}:${L_HTTPD_PORT} check" >> $HAPROXY_CONF
+    echo ssh
+    $SSH echo "    server ${CONTAINER} ${IP}:${L_HTTPD_PORT} check >> $HAPROXY_CONF"
     $SSH /etc/init.d/haproxy reload
 }
 
