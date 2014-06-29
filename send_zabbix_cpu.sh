@@ -8,7 +8,7 @@
 SERVER_IP=10.34.48.194
 IP=`ifconfig eth0|grep inet|awk '{print $2}'|cut -d: -f2`
 
-TOKEN=`curl -X GET -H "Content-Type:application/json-rpc" -d '{"auth":null,"method":"user.login","id":1,"params":{"user":"admin","password":"zabbix"},"jsonrpc":"2.0"}' http://${SERVER_IP}/zabbix/api_jsonrpc.php | jq ".result"`  
+TOKEN=`curl -s -X GET -H "Content-Type:application/json-rpc" -d '{"auth":null,"method":"user.login","id":1,"params":{"user":"admin","password":"zabbix"},"jsonrpc":"2.0"}' http://${SERVER_IP}/zabbix/api_jsonrpc.php | jq ".result"`  
 
 #特定IPのホスト一覧取得
 JSON="{
@@ -25,10 +25,13 @@ JSON="{
   \"jsonrpc\": \"2.0\"
 }"
 
-HOSTS=`curl -X GET -H "Content-Type:application/json-rpc" -d "${JSON}" http://${SERVER_IP}/zabbix/api_jsonrpc.php |  jq ".result[].host"`
+HOSTS=`curl -s -X GET -H "Content-Type:application/json-rpc" -d "${JSON}" http://${SERVER_IP}/zabbix/api_jsonrpc.php |  jq ".result[].host"`
 for host in $HOSTS; do
   host=`echo $host | sed 's/\"//g'`
   cpu=`sh cpu.sh $host`
-  echo zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k "docker_cpu" -o "${cpu}"
-  zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k "docker_cpu" -o "${cpu}"
+  if [ ! $? -eq 0 ]; then
+    continue
+  fi
+  zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k "docker_cpu" -o "${cpu}" 
+  echo cpu $cpu
 done
