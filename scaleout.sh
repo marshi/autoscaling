@@ -3,7 +3,11 @@ PID=/home/share/mukai_masaki/scaleup.pid
 INSTANCE=0
 ID=zabbix-httpd
 CPU=0.5
-IP=10.34.48.194
+IP=${MARATHON_SERVER_IP}
+if [ -z ${IP} ]; then
+  echo "please set MARATHON_SERVER_IP"
+  exit 1
+fi
 
 #whoami >> /home/share/mukai_masaki/a.txt
 if [ -f $PID ]; then

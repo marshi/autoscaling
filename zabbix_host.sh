@@ -6,12 +6,26 @@
 
 ZABBIX_PORT=10050
 HTTPD_PORT=80
-SERVER_IP="10.34.48.194"
+SERVER_IP=${ZABBIX_SERVER_IP}
+if [ -z ${SERVER_IP} ]; then
+  echo "please set ZABBIX_SERVER_IP"
+  exit 1
+fi
+
+
 IP=`ifconfig eth0|grep inet|awk '{print $2}'|cut -d: -f2`
 TEMPLATE_ID=10113
 GROUP_ID=8
 HAPROXY_CONF=/etc/haproxy/haproxy.cfg
-SSH="ssh 10.34.48.194 "
+
+PROXY_IP=${HAPROXY_IP}
+if [ -z ${PROXY_IP} ]; then
+  echo "please set HAPROXY_IP"
+  exit 1
+fi
+
+SSH="ssh ${PROXY_IP} "
+
 
 zabbix_docker() {
   while read EVENT; do

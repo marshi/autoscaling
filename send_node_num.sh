@@ -5,7 +5,13 @@
 # 現在稼働中のノード数をzabbixに送る.
 #
 
-SERVER_IP=10.34.48.194
+SERVER_IP=${ZABBIX_SERVER_IP}
+if [ -z ${SERVER_IP} ]; then
+  echo "please set ZABBIX_SERVER_IP"
+  exit 1
+fi
+
+
 IP=`ifconfig eth0|grep inet|awk '{print $2}'|cut -d: -f2`
 ID=zabbix-httpd
 
