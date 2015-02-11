@@ -7,10 +7,11 @@
 
 USAGE="usage: cpu.sh [-d] [-c \"docker or libvirt\"] [container] "
 CONTAINER_TYPE="docker"
+LXC_CPU_DIR=/cgroup/cpu/cpuacct/lxc
 DEBUG_FLG=0
 
 cpu(){
-  container=${1}.libvirt-lxc
+  container=${1}
   dir=$LXC_CPU_DIR/$container
   if [ $DEBUG_FLG -eq 1 -a ! -d $dir ]; then
     echo "container not found; check option -c(CONTAINER TYPE. docker or libvirt)"
@@ -46,7 +47,7 @@ cpu(){
     prev_cpu_time=0
   fi 
   diff_cpu_time=`expr $cur_cpu_time - $prev_cpu_time | xargs -i echo "scale=5; {} / 100" | bc`
-  if [ -n "$DEBUG_FLG" ]; then
+  if [ $DEBUG_FLG -eq 1 ]; then
     echo $container
   fi
   
@@ -63,6 +64,7 @@ cpu(){
 
 all(){
 for dir in `find $LXC_CPU_DIR/* -type d`; do
+  echo $dir
   container=`basename $dir`
   cpu $container
 done
@@ -86,11 +88,8 @@ done
 
 shift $((OPTIND - 1))
 
-
 if [ ${CONTAINER_TYPE}x = "libvirt"x ]; then
   LXC_CPU_DIR=/sys/fs/cgroup/cpuacct/machine
-else
-  LXC_CPU_DIR=/cgroup/cpu/cpuacct/lxc
 fi
 
 if [ $# -eq 0 ]; then
@@ -100,6 +99,9 @@ fi
 
 if [ $# -eq 1 ];then
   container=$1
+  if [ $CONTAINER_TYPE = "libvirt" ]; then
+    container=${container}.libvirt-lxc
+  fi
   cpu $container
   if [ $? -eq 1 ]; then
     exit 1;
