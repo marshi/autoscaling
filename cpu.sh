@@ -64,7 +64,6 @@ cpu(){
 
 all(){
 for dir in `find $LXC_CPU_DIR/* -type d`; do
-  echo $dir
   container=`basename $dir`
   cpu $container
 done
