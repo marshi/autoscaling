@@ -1,9 +1,42 @@
 #!/bin/sh
 
-# ./send_zabbix_cpu.sh
+# ./send_zabbix_cpu.sh -k zabbix_item_key
 #
 # zabbixサーバから起動IPに属するホスト一覧を取得し、そのホスト上で起動しているdockerのcpu使用率をsend_zabbix APIを使ってzabbixサーバに送る.
 #
+
+usage() {
+  echo "usage: ex. send_zabbix_cpu.sh -k docker_cpu [-c \"libvirt\" or \"docker\"]" 
+}
+
+CONTAINER_TYPE="docker"
+while getopts c:k: OPT; do
+  case $OPT in
+    k) 
+      KEY=$OPTARG
+      ;;
+    c)
+      if [ $OPTARG = "libvirt" ]; then
+        CONTAINER_TYPE="libvirt"
+      fi
+    \?)
+      usage
+      exit 1;
+      ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+if [ x$KEY = x ]; then
+  usage
+  exit 1;
+fi
+
+if [ ! $# -eq 0 ]; then
+  usage
+  exit 1;
+fi
 
 SERVER_IP=${ZABBIX_SERVER_IP}
 if [ -z ${SERVER_IP} ]; then
@@ -38,6 +71,6 @@ for host in $HOSTS; do
   if [ ! $? -eq 0 ]; then
     continue
   fi
-  zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k "docker_cpu" -o "${cpu}" 
-  echo cpu $cpu
+  zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k $KEY -o "${cpu}" 
+  echo cpu -c $CONTAINER_TYPE $cpu
 done

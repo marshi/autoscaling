@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# usage: cpu.sh [-d] [container]
-#
+# usage: cpu.sh [-d] [-c \"docker or libvirt\"] [container] 
 # cpu使用率を出力.
 #
 
@@ -63,6 +62,10 @@ cpu(){
 }
 
 all(){
+if [ ! -d $LXC_CPU_DIR ]; then
+  echo $USAGE
+  exit 1;  
+fi
 for dir in `find $LXC_CPU_DIR/* -type d`; do
   container=`basename $dir`
   cpu $container
