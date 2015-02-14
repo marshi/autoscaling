@@ -1,16 +1,24 @@
 #!/bin/sh
 
-# ./send_zabbix_cpu.sh
-#
-# zabbixサーバから起動IPに属するホスト一覧を取得し、そのホスト上で起動しているdockerのcpu使用率をsend_zabbix APIを使ってzabbixサーバに送る.
-#
-
 SERVER_IP=${ZABBIX_SERVER_IP}
 if [ -z ${SERVER_IP} ]; then
   echo "please set ZABBIX_SERVER_IP"
   exit 1
 fi
 
+HOSTNAME=`hostname`
+while getopts h: opt; do
+  case $opt in
+    h) 
+      echo "aaa"
+      HOSTNAME=$OPTARG
+      ;;
+   esac
+done
+
+shift $((OPTIND - 1))
+
+echo $HOSTNAME
 
 IP=`ifconfig eth0|grep inet|awk '{print $2}'|cut -d: -f2|grep -v ^$`
 
@@ -22,7 +30,7 @@ JSON="{
   \"auth\": ${TOKEN},
   \"method\": \"host.create\",
   \"params\":{
-    \"host\": \"`hostname`\",
+    \"host\": \"${HOSTNAME}\",
     \"interfaces\": [
       {
         \"type\": 1,
