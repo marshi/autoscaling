@@ -10,15 +10,12 @@ HOSTNAME=`hostname`
 while getopts h: opt; do
   case $opt in
     h) 
-      echo "aaa"
       HOSTNAME=$OPTARG
       ;;
    esac
 done
 
 shift $((OPTIND - 1))
-
-echo $HOSTNAME
 
 IP=`ifconfig eth0|grep inet|awk '{print $2}'|cut -d: -f2|grep -v ^$`
 

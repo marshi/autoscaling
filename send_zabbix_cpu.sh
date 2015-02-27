@@ -19,6 +19,7 @@ while getopts c:k: OPT; do
       if [ $OPTARG = "libvirt" ]; then
         CONTAINER_TYPE="libvirt"
       fi
+      ;;
     \?)
       usage
       exit 1;
@@ -67,10 +68,10 @@ JSON="{
 HOSTS=`curl -s -X GET -H "Content-Type:application/json-rpc" -d "${JSON}" http://${SERVER_IP}/zabbix/api_jsonrpc.php |  jq ".result[].host"`
 for host in $HOSTS; do
   host=`echo $host | sed 's/\"//g'`
-  cpu=`sh cpu.sh $host`
+  cpu=`sh cpu.sh -c $CONTAINER_TYPE $host`
   if [ ! $? -eq 0 ]; then
     continue
   fi
-  zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k $KEY -o "${cpu}" 
-  echo cpu -c $CONTAINER_TYPE $cpu
+  echo $cpu
+  zabbix_sender -z ${SERVER_IP} -p 10051 -s "${host}" -k $KEY -o "${cpu}" > /dev/null
 done
