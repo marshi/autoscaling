@@ -1,5 +1,6 @@
 #!/bin/sh
 
+ZABBIX_SERVER_IP=10.34.48.194
 SERVER_IP=${ZABBIX_SERVER_IP}
 if [ -z ${SERVER_IP} ]; then
   echo "please set ZABBIX_SERVER_IP"
@@ -51,6 +52,6 @@ JSON="{
 
 echo $JSON
 
-RESULT=`curl -s -X GET -H "Content-Type:application/json-rpc" -d "${JSON}" http://${SERVER_IP}/zabbix/api_jsonrpc.php` # |  jq ".result[].host"`
+RESULT=`curl -s -X GET -H "Content-Type:application/json-rpc" -d "${JSON}" http://${SERVER_IP}/zabbix/api_jsonrpc.php` #| jq ".result[].host"`
 echo $RESULT
 

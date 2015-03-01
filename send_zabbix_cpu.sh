@@ -45,7 +45,6 @@ if [ -z ${SERVER_IP} ]; then
   exit 1
 fi
 
-
 IP=`ifconfig eth0|grep inet|awk '{print $2}'|cut -d: -f2`
 
 TOKEN=`curl -s -X GET -H "Content-Type:application/json-rpc" -d '{"auth":null,"method":"user.login","id":1,"params":{"user":"admin","password":"zabbix"},"jsonrpc":"2.0"}' http://${SERVER_IP}/zabbix/api_jsonrpc.php | jq ".result"`  

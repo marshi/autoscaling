@@ -8,12 +8,12 @@ if [ ! $# -eq 1 ]; then
 fi
 
 APPID=$1
-WEB_NUM=`sudo flynn -a $APPID scale | awk -F "=" '{print $2}'`
+WEB_NUM=`flynn -a $APPID scale | awk -F "=" '{print $2}'`
 WEB_NUM=`expr $WEB_NUM + 1`
 
 echo $WEB_NUM
 
-CLUSTER=`sudo flynn -a $APPID scale web=$WEB_NUM | grep up | awk '{print $4}' | awk -F "-" '{print $2}'`
+CLUSTER=`flynn -a $APPID scale web=$WEB_NUM | grep up | awk '{print $4}' | awk -F "-" '{print $2}'`
 
 echo $CLUSTER
 
