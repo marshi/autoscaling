@@ -1,9 +1,21 @@
 #!/bin/sh
 
-WEB_NUM=`sudo flynn scale | awk -F "=" '{print $2}'`
+DIR=`dirname ${0}`
+
+if [ ! $# -eq 1 ]; then
+  echo error. please specify appid
+  exit 1
+fi
+
+APPID=$1
+WEB_NUM=`sudo flynn -a $APPID scale | awk -F "=" '{print $2}'`
 WEB_NUM=`expr $WEB_NUM + 1`
 
-CLUSTER=`sudo flynn scale web=$WEB_NUM | grep up | awk '{print $4}' | awk -F "-" '{print $2}'`
+echo $WEB_NUM
 
-sh zabbix_register_host.sh -h $CLUSTER
+CLUSTER=`sudo flynn -a $APPID scale web=$WEB_NUM | grep up | awk '{print $4}' | awk -F "-" '{print $2}'`
+
+echo $CLUSTER
+
+sh $DIR/zabbix_register_host.sh -h $CLUSTER
 

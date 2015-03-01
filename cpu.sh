@@ -29,7 +29,7 @@ cpu(){
   else
     prev_cpu_time=0
   fi 
-  diff_cpu_time=`expr $cur_cpu_time - $prev_cpu_time | xargs -i echo "scale=5; {} / 1000 / 1000 / 1000" | bc`
+  diff_cpu_time=`expr $cur_cpu_time - $prev_cpu_time | xargs -i echo "scale=5; {} / 1000 / 1000 / 100" | bc`
 
   #経過時間の差分を計算
   cur_time=`date +%s`
